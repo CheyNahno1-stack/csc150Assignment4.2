@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Underground Vinyl - The MIX | TekHit | Margo Enya</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .vinyl-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.02) 1px, transparent 1px),
+                radial-gradient(circle at 80% 60%, rgba(255,255,255,0.01) 1px, transparent 1px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255,107,107,0.3);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #888;
+            letter-spacing: 2px;
+        }
+
+        .artists {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .artist-tag {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .artist-tag:hover {
+            background: rgba(255,107,107,0.2);
+            border-color: #ff6b6b;
+            transform: translateY(-2px);
+        }
+
+        .vinyl-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .vinyl-record {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .vinyl-record:hover {
+            transform: scale(1.05);
+        }
+
+        .record-outer {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #1a1a1a, #333, #1a1a1a);
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+
+        .record-grooves {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-radius: 50%;
+            background: 
+                repeating-conic-gradient(from 0deg, 
+                    transparent 0deg, 
+                    rgba(255,255,255,0.05) 2deg, 
+                    transparent 4deg
+                );
+        }
+
+        .record-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            font-size: 0.8rem;
+            text-align: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .record-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 15px;
+            height: 15px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: #000;
+            box-shadow: inset 0 0 5px rgba(255,255,255,0.3);
+        }
+
+        .track-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .track-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .track-artist {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .turntable {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #2a2a2a 30%, #1a1a1a 70%);
+            border-radius: 50%;
+            border: 3px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            z-index: 100;
+        }
+
+        .turntable-arm {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 2px;
+            height: 80px;
+            background: #666;
+            transform-origin: bottom;
+            transform: rotate(-30deg);
+            border-radius: 2px;
+        }
+
+        .turntable-needle {
+            position: absolute;
+            bottom: -5px;
+            left: -1px;
+            width: 4px;
+            height: 10px;
+            background: #ff6b6b;
+            border-radius: 2px;
+        }
+
+        .playing-record {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #1a1a1a, #333);
+            animation: spin 3s linear infinite;
+            position: relative;
+        }
+
+        .playing-record::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: #000;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .spinning {
+            animation: spin 3s linear infinite;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            color: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,107,107,0.2);
+            border-color: #ff6b6b;
+            transform: translateY(-2px);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .now-playing {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            max-width: 350px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .now-playing h3 {
+            margin-bottom: 10px;
+            color: #ff6b6b;
+        }
+
+        .track-description {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #ccc;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .vinyl-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .vinyl-record {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .turntable {
+                width: 150px;
+                height: 150px;
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .playing-record {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .now-playing {
+                bottom: 10px;
+                left: 10px;
+                max-width: 250px;
+            }
+        }
+
+        .glow {
+            box-shadow: 0 0 30px rgba(255,107,107,0.6);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin: 60px 0 40px;
+            color: #4ecdc4;
+            letter-spacing: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="vinyl-texture"></div>
+    
+    <div class="container">
+        <header>
+            <h1 class="logo">UNDERGROUND VINYL</h1>
+            <p class="tagline">DISCOVER THE SOUND BENEATH</p>
+            <div class="artists">
+                <span class="artist-tag">THE MIX</span>
+                <span class="artist-tag">TEKHIT</span>
+                <span class="artist-tag">MARGO ENYA</span>
+            </div>
+        </header>
+
+        <h2 class="section-title">LATEST RELEASES</h2>
+
+        <div class="vinyl-grid">
+            <div class="vinyl-record" data-track="1">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Midnight Frequencies</div>
+                    <div class="track-artist">The MIX</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="2">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Digital Pulse</div>
+                    <div class="track-artist">TekHit</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="3">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Ethereal Dreams</div>
+                    <div class="track-artist">Margo Enya</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="4">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Urban Rhythms</div>
+                    <div class="track-artist">The MIX</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="5">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">System Override</div>
+                    <div class="track-artist">TekHit</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="6">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Whispered Secrets</div>
+                    <div class="track-artist">Margo Enya</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="7">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Bass Underground</div>
+                    <div class="track-artist">The MIX</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="8">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Cybernetic Flow</div>
+                    <div class="track-artist">TekHit</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="9">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Ambient Twilight</div>
+                    <div class="track-artist">Margo Enya</div>
+                </div>
+            </div>
+
+            <div class="vinyl-record" data-track="10">
+                <div class="record-outer">
+                    <div class="record-grooves"></div>
+                    <div class="record-label">
+                        <strong>UNDERGROUND</strong>
+                        <small>VINYL</small>
+                    </div>
+                    <div class="record-center"></div>
+                </div>
+                <div class="track-info">
+                    <div class="track-title">Future Nostalgia</div>
+                    <div class="track-artist">Collective</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" id="playBtn">▶ PLAY</button>
+            <button class="control-btn" id="pauseBtn">⏸ PAUSE</button>
+            <button class="control-btn" id="stopBtn">⏹ STOP</button>
+            <button class="control-btn" id="nextBtn">⏭ NEXT</button>
+            <button class="control-btn" id="prevBtn">⏮ PREV</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+
+    <div class="turntable" id="turntable">
+        <div class="turntable-arm">
+            <div class="turntable-needle"></div>
+        </div>
+        <div class="playing-record" id="playingRecord"></div>
+    </div>
+
+    <!-- AUDIO ELEMENT FOR ACTUAL PLAYBACK -->
+    <audio id="audioPlayer" preload="metadata"></audio>
+
+    <div class="now-playing" id="nowPlaying" style="display: none;">
+        <h3>NOW PLAYING</h3>
+        <div id="currentTrack">Select a track to play</div>
+        <div id="currentArtist"></div>
+        <div class="track-description" id="trackDescription"></div>
+        <div class="audio-time" style="margin-top: 10px; font-size: 0.8rem; color: #888;">
+            <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+        </div>
+    </div>
+
+    <script>
+        class VinylPlayer {
+            constructor() {
+                this.currentTrack = null;
+                this.isPlaying = false;
+                this.audioPlayer = document.getElementById('audioPlayer');
+                this.progressInterval = null;
+                // ========================================
+                // 🎵 REPLACE YOUR TRACK INFORMATION HERE
+                // ========================================
+                this.tracks = [
+                    { 
+                        title: "Midnight Frequencies",           // ← Replace with your track title
+                        artist: "The MIX",                      // ← Replace with your artist name
+                        description: "A hypnotic journey through late-night radio waves, blending ambient textures with underground beats that pulse like the city's heartbeat after dark. Made with Suno. ",  // ← Replace with your track description
+                        audioFile: "track_1_electric.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "Lit Candles", 
+                        artist: "TekHit",
+                        description: "Single from the Female Lead. Written about the muse we all know, the want we all feel,and the candles flame that expresses true earning. Made with Music Muse Ai.",
+                        audioFile: "track_1_folk.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "Urban Rythms", 
+                        artist: "Margo Enya",
+                        description: "Street-smart beats collide with jazz-influenced samples, painting sonic portraits of metropolitan life with all its chaos and beauty. Made with Music Ai Generator.Made with Music Muse Ai",
+                        audioFile: "track_1_other.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "Kinky Beats", 
+                        artist: "The MIX",
+                        description: "Floating vocals drift over lush soundscapes, creating an otherworldly atmosphere that blurs the line between consciousness and reverie. Made with Suno.",
+                        audioFile: "track_2_electric.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "SunShine On My Sholder", 
+                        artist: "TekHit",
+                        description: "Light beats and sweet synths create a lovely soundscape. This track rebels against algorithmic conformity with fluid, unfiltered energy. Made with Song Generator Ai.\pp000p0000000p",
+                        audioFile: "track_2_folk.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "Through the Storm", 
+                        artist: "Margo Enya",
+                        description: "Intimate vocals layered with subtle harmonies reveal hidden truths through melodic storytelling. A delicate balance of vulnerability and strength.",
+                        audioFile: "track_2_other.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "City Serende", 
+                        artist: "The MIX",
+                        description: "Deep sub-bass frequencies rumble beneath intricate percussion patterns, creating a seismic musical experience that resonates in your bones.Made with Suno.",
+                        audioFile: "track_3_electric.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "Cybernetic Flow", 
+                        artist: "TekHit",
+                        description: "Fluid electronic sequences merge organic and synthetic elements, exploring the boundary between human creativity and machine precision. Made with Song Generator Ai.",
+                        audioFile: "track_3_other.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "Burning Twilight", 
+                        artist: "Margo Enya",
+                        description: "As day transitions to night, gentle melodies weave through atmospheric pads, capturing the peaceful melancholy of evening's golden hour.Made with Music Muse Ai ",
+                        audioFile: "track_4_other.mp3"    // ← REPLACE: Path to your audio file
+                    },
+                    { 
+                        title: "Future Nostalgia", 
+                        artist: "Collective",
+                        description: "A collaborative exploration where all three artists blend their signatures into a retro-futuristic masterpiece that honors the past while embracing tomorrow. Made with Suno.",
+                        audioFile: "track_4_electric.mp3"   // ← REPLACE: Path to your audio file
+                    }
+                ];
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.setupAudioEvents();
+                this.simulateProgress();
+            }
+
+            setupAudioEvents() {
+                // Update progress bar with real audio progress
+                this.audioPlayer.addEventListener('timeupdate', () => {
+                    if (this.audioPlayer.duration) {
+                        const progress = (this.audioPlayer.currentTime / this.audioPlayer.duration) * 100;
+                        document.getElementById('progressFill').style.width = progress + '%';
+                        
+                        // Update time display
+                        document.getElementById('currentTime').textContent = this.formatTime(this.audioPlayer.currentTime);
+                        document.getElementById('totalTime').textContent = this.formatTime(this.audioPlayer.duration);
+                    }
+                });
+
+                // Auto-advance to next track when current one ends
+                this.audioPlayer.addEventListener('ended', () => {
+                    this.next();
+                });
+
+                // Handle play/pause state changes
+                this.audioPlayer.addEventListener('play', () => {
+                    this.isPlaying = true;
+                    this.startAnimation();
+                    this.updateUI();
+                });
+
+                this.audioPlayer.addEventListener('pause', () => {
+                    this.isPlaying = false;
+                    this.stopAnimation();
+                    this.updateUI();
+                });
+
+                // Handle loading states
+                this.audioPlayer.addEventListener('loadstart', () => {
+                    console.log('Loading track...');
+                });
+
+                this.audioPlayer.addEventListener('canplay', () => {
+                    console.log('Track ready to play');
+                });
+
+                this.audioPlayer.addEventListener('error', (e) => {
+                    console.error('Audio error:', e);
+                    alert('Error loading audio file. Please check the file path.');
+                });
+            }
+
+            formatTime(seconds) {
+                if (!seconds || isNaN(seconds)) return '0:00';
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return mins + ':' + (secs < 10 ? '0' : '') + secs;
+            }
+
+            bindEvents() {
+                // Vinyl record clicks
+                document.querySelectorAll('.vinyl-record').forEach(record => {
+                    record.addEventListener('click', () => {
+                        const trackNum = parseInt(record.dataset.track);
+                        this.selectTrack(trackNum);
+                    });
+                });
+
+                // Control buttons
+                document.getElementById('playBtn').addEventListener('click', () => this.play());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pause());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                document.getElementById('nextBtn').addEventListener('click', () => this.next());
+                document.getElementById('prevBtn').addEventListener('click', () => this.prev());
+            }
+
+            selectTrack(trackNum) {
+                this.currentTrack = trackNum;
+                const track = this.tracks[trackNum - 1];
+                
+                // Load the audio file
+                this.audioPlayer.src = track.audioFile;
+                this.audioPlayer.load();
+                
+                this.updateUI();
+                // Don't auto-play, let user click play
+            }
+
+            play() {
+                if (this.currentTrack === null) {
+                    this.selectTrack(1);
+                    return;
+                }
+
+                // Play the actual audio
+                this.audioPlayer.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                    alert('Could not play audio file. Please check the file path and format.');
+                });
+            }
+
+            pause() {
+                this.audioPlayer.pause();
+            }
+
+            stop() {
+                this.audioPlayer.pause();
+                this.audioPlayer.currentTime = 0;
+                document.getElementById('progressFill').style.width = '0%';
+            }
+
+            next() {
+                if (this.currentTrack === null) return;
+                const nextTrack = this.currentTrack >= 10 ? 1 : this.currentTrack + 1;
+                this.selectTrack(nextTrack);
+                if (this.isPlaying) {
+                    // Small delay to ensure audio is loaded
+                    setTimeout(() => this.play(), 100);
+                }
+            }
+
+            prev() {
+                if (this.currentTrack === null) return;
+                const prevTrack = this.currentTrack <= 1 ? 10 : this.currentTrack - 1;
+                this.selectTrack(prevTrack);
+                if (this.isPlaying) {
+                    // Small delay to ensure audio is loaded
+                    setTimeout(() => this.play(), 100);
+                }
+            }
+
+            startAnimation() {
+                document.getElementById('playingRecord').classList.add('spinning');
+                document.getElementById('turntable').classList.add('glow');
+            }
+
+            stopAnimation() {
+                document.getElementById('playingRecord').classList.remove('spinning');
+                document.getElementById('turntable').classList.remove('glow');
+            }
+
+            startProgress() {
+                // Remove old simulated progress - now handled by audio timeupdate event
+            }
+
+            stopProgress() {
+                // Remove old simulated progress - now handled by audio events
+            }
+
+            simulateProgress() {
+                // Add some visual flair with random progress updates
+                setInterval(() => {
+                    if (!this.isPlaying) return;
+                    const records = document.querySelectorAll('.vinyl-record');
+                    records.forEach((record, index) => {
+                        if (index + 1 === this.currentTrack) {
+                            record.style.transform = 'scale(1.05) rotate(' + (Date.now() / 20) + 'deg)';
+                        } else {
+                            record.style.transform = '';
+                        }
+                    });
+                }, 50);
+            }
+
+            updateUI() {
+                const nowPlaying = document.getElementById('nowPlaying');
+                
+                if (this.currentTrack !== null) {
+                    const track = this.tracks[this.currentTrack - 1];
+                    document.getElementById('currentTrack').textContent = track.title;
+                    document.getElementById('currentArtist').textContent = track.artist;
+                    document.getElementById('trackDescription').textContent = track.description;
+                    nowPlaying.style.display = 'block';
+                } else {
+                    nowPlaying.style.display = 'none';
+                }
+
+                // Update play button state
+                const playBtn = document.getElementById('playBtn');
+                playBtn.textContent = this.isPlaying ? '⏸ PLAYING' : '▶ PLAY';
+            }
+        }
+
+        // Initialize the player when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new VinylPlayer();
+        });
+
+        // Add some ambient interaction
+        document.addEventListener('mousemove', (e) => {
+            const cursor = { x: e.clientX, y: e.clientY };
+            const records = document.querySelectorAll('.vinyl-record');
+            
+            records.forEach(record => {
+                const rect = record.getBoundingClientRect();
+                const center = {
+                    x: rect.left + rect.width / 2,
+                    y: rect.top + rect.height / 2
+                };
+                
+                const distance = Math.sqrt(
+                    Math.pow(cursor.x - center.x, 2) + Math.pow(cursor.y - center.y, 2)
+                );
+                
+                if (distance < 150) {
+                    const intensity = (150 - distance) / 150;
+                    record.style.boxShadow = `0 0 ${30 * intensity}px rgba(255, 107, 107, ${0.3 * intensity})`;
+                } else {
+                    record.style.boxShadow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
